@@ -2,6 +2,7 @@ package com.cloudbees.jenkins.plugins.amazonecs;
 
 
 import com.amazonaws.services.ecs.model.TaskDefinition;
+import hudson.model.Label;
 import hudson.model.labels.LabelAtom;
 import hudson.slaves.NodeProvisioner.PlannedNode;
 import static junit.framework.TestCase.assertEquals;
@@ -101,14 +102,50 @@ public class ECSCloudTest {
 
     @Test
     public void provisionByLabelInheritFromUsingListOfLabels() throws Exception {
-        ECSCloud            cloud    = new ECSCloud("mycloud", "", "", "mycluster");
-        ECSTaskTemplate expected = getTaskTemplate("somename","label1 label2 label3");
+        ECSCloud            cloud    = new ECSCloud("myCloud", "", "", "myCluster");
+        ECSTaskTemplate expected = getTaskTemplate("someNme","label1,label2,label3");
 
         List<ECSTaskTemplate> currentTemplates = cloud.getTemplates();
         List<ECSTaskTemplate> newTemplates = new LinkedList<>(currentTemplates);
         newTemplates.add(expected);
         cloud.setTemplates(newTemplates);
         assertTrue(cloud.canProvision("label2"));
+    }
+
+    @Test
+    public void cannotProvisionByLabelInheritFromUsingListOfLabels() throws Exception {
+        ECSCloud            cloud    = new ECSCloud("myCloud", "", "", "myCluster");
+        ECSTaskTemplate expected = getTaskTemplate("someNme","label1,label2");
+
+        List<ECSTaskTemplate> currentTemplates = cloud.getTemplates();
+        List<ECSTaskTemplate> newTemplates = new LinkedList<>(currentTemplates);
+        newTemplates.add(expected);
+        cloud.setTemplates(newTemplates);
+        assertTrue(!cloud.canProvision("label3"));
+    }
+
+    @Test
+    public void provisionAgentByTemplateWithListOfLabels() throws Exception {
+        ECSCloud cloud = new ECSCloud("myCloud", "", "", "mycluster");
+        ECSTaskTemplate expected = getTaskTemplate("someName","label1,label2,label3");
+
+        List<ECSTaskTemplate> currentTemplates = cloud.getTemplates();
+        List<ECSTaskTemplate> newTemplates = new LinkedList<>(currentTemplates);
+        newTemplates.add(expected);
+        cloud.setTemplates(newTemplates);
+        assertTrue(cloud.canProvision(new LabelAtom("label1")));
+    }
+
+    @Test
+    public void cannotProvisionAgentByTemplateWithListOfLabels() throws Exception {
+        ECSCloud cloud = new ECSCloud("myCloud", "", "", "mycluster");
+        ECSTaskTemplate expected = getTaskTemplate("someName","label1,label2");
+
+        List<ECSTaskTemplate> currentTemplates = cloud.getTemplates();
+        List<ECSTaskTemplate> newTemplates = new LinkedList<>(currentTemplates);
+        newTemplates.add(expected);
+        cloud.setTemplates(newTemplates);
+        assertTrue(!cloud.canProvision(new LabelAtom("label3")));
     }
 
     @Test

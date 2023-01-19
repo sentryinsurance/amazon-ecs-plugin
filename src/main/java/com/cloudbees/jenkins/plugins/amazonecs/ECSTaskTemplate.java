@@ -1394,7 +1394,12 @@ public class ECSTaskTemplate extends AbstractDescribableImpl<ECSTaskTemplate> im
     }
 
     public Set<LabelAtom> getLabelSet() {
-        return Label.parse(label);
+        Set<LabelAtom> labelSet = new HashSet<>();
+        for(String i : Arrays.asList(label.split(",")))
+        {
+            labelSet.addAll(Label.parse(i));
+        }
+        return labelSet;
     }
 
     public String getDisplayName() {

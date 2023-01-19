@@ -237,7 +237,14 @@ public class ECSCloud extends Cloud {
         }
         for (ECSTaskTemplate t : getAllTemplates()) {
             if (label.matches(t.getLabelSet())) {
-                return t;
+                return new ECSTaskTemplate(t.getTemplateName(), label.getName(), t.getAgentContainerName(), t.getTaskDefinitionOverride(),
+                        t.getTaskDefinitionOverride(), t.getImage(), t.getRepositoryCredentials(), t.getLaunchType(), t.getOperatingSystemFamily(),
+                        t.getCpuArchitecture(), t.getDefaultCapacityProvider(), t.getCapacityProviderStrategies(), t.getNetworkMode(), t.getRemoteFSRoot(),
+                        t.getUniqueRemoteFSRoot(), t.getPlatformVersion(), t.getMemory(), t.getMemoryReservation(), t.getCpu(),
+                        t.getEphemeralStorageSizeInGiB(), t.getSubnets(), t.getSecurityGroups(), t.getAssignPublicIp(), t.getPrivileged(),
+                        t.getContainerUser(), t.getKernelCapabilities(), t.getLogDriverOptions(), t.getTags(), t.getEnvironments(),
+                        t.getExtraHosts(), t.getMountPoints(), t.getEfsMountPoints(), t.getPortMappings(), t.getExecutionRole(),
+                        t.getPlacementStrategies(), t.getTaskrole(), t.getInheritFrom(), t.getSharedMemorySize(), t.isEnableExecuteCommand());
             }
         }
         return null;
